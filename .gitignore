@@ -4,4 +4,5 @@ venv
 *.pyc
 .ipynb_checkpoints
 data
+bin
 *.vec
