@@ -2,6 +2,7 @@ import os
 from keras.preprocessing.text import Tokenizer
 from keras import layers, models
 import pickle
+import numpy as np
 from abc import abstractmethod, ABC
 
 
@@ -26,6 +27,11 @@ class Model(ABC):
     @abstractmethod
     def train(self, reader):
         pass
+
+    @abstractmethod
+    def predict(self, texts):
+        if not (self.tokenizer and self.model):
+            raise Exception("Model not trained")
 
 
 class LogisticRegression(Model):
@@ -56,3 +62,9 @@ class LogisticRegression(Model):
                        epochs=5)
 
         self.save()
+
+    def predict(self, texts):
+        super(LogisticRegression, self).predict(texts)
+        texts = self.tokenizer.texts_to_matrix(texts)
+
+        return self.model.predict(texts)

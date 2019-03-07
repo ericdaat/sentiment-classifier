@@ -1,4 +1,5 @@
 import unittest
+import numpy as np
 from nlp import ml, reader, preprocessing
 from keras.preprocessing.text import Tokenizer
 from keras.models import Model
@@ -28,3 +29,10 @@ class TestLogisticRegression(unittest.TestCase):
         self.assertIsInstance(TestLogisticRegression.model.tokenizer, Tokenizer)
         self.assertIsInstance(TestLogisticRegression.model.model, Model)
 
+    def test_predict(self):
+        self.assertIsInstance(
+            TestLogisticRegression.model.predict([["hi there"]]),
+            np.ndarray)
+        self.assertEqual(
+            TestLogisticRegression.model.predict([["hi there"], ["how are you"]]).shape,
+            (2, 1))
