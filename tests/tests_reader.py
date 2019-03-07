@@ -1,6 +1,7 @@
 import unittest
 import pandas as pd
-from sentiment_classifier.nlp import reader
+from nlp import reader
+from nlp.preprocessing import clean_text
 
 
 class TestImdb(unittest.TestCase):
@@ -12,18 +13,22 @@ class TestImdb(unittest.TestCase):
 
     def test_read_folder(self):
         limit = 5
-        TestImdb.imdb.load_dataset("data/aclImdb", limit=limit)
 
-        # test type
-        self.assertIsInstance(TestImdb.imdb.train_data, pd.DataFrame)
-        self.assertIsInstance(TestImdb.imdb.test_data, pd.DataFrame)
+        for preprocessing_function in [None, clean_text]:
+            TestImdb.imdb.load_dataset("data/aclImdb",
+                                       limit=limit,
+                                       preprocessing_function=preprocessing_function)
 
-        # test shape
-        self.assertEqual(TestImdb.imdb.train_data.shape, (2*limit, 2))
-        self.assertEqual(TestImdb.imdb.test_data.shape, (2*limit, 2))
+            # test type
+            self.assertIsInstance(TestImdb.imdb.train_data, pd.DataFrame)
+            self.assertIsInstance(TestImdb.imdb.test_data, pd.DataFrame)
 
-        # test columns
-        self.assertListEqual(TestImdb.imdb.train_data.columns.tolist(),
-                             ["review", "label"])
-        self.assertListEqual(TestImdb.imdb.test_data.columns.tolist(),
-                             ["review", "label"])
+            # test shape
+            self.assertEqual(TestImdb.imdb.train_data.shape, (2*limit, 2))
+            self.assertEqual(TestImdb.imdb.test_data.shape, (2*limit, 2))
+
+            # test columns
+            self.assertListEqual(TestImdb.imdb.train_data.columns.tolist(),
+                                 ["review", "label"])
+            self.assertListEqual(TestImdb.imdb.test_data.columns.tolist(),
+                                 ["review", "label"])

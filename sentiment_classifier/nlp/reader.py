@@ -9,7 +9,7 @@ class IMDBReader(object):
         self.train_data = None
         self.test_data = None
 
-    def _read_folder(self, path, label, limit):
+    def _read_folder(self, path, label, limit, preprocessing_function):
         texts = []
         files = glob(os.path.join(path, "*.txt"))
         if limit:
@@ -18,6 +18,8 @@ class IMDBReader(object):
         for i, file in enumerate(files):
             with io.open(file, "r", encoding="utf8") as f:
                 text = f.read()
+                if preprocessing_function:
+                    text = preprocessing_function(text)
                 texts.append((text, label))
 
         return texts
@@ -31,11 +33,15 @@ class IMDBReader(object):
 
         return df
 
-    def load_dataset(self, path, limit=None):
-        train_pos = self._read_folder(os.path.join(path, "train", "pos"), 1, limit)
-        train_neg = self._read_folder(os.path.join(path, "train", "neg"), 0, limit)
-        test_pos = self._read_folder(os.path.join(path, "test", "pos"), 1, limit)
-        test_neg = self._read_folder(os.path.join(path, "test", "neg"), 0, limit)
+    def load_dataset(self, path, limit=None, preprocessing_function=None):
+        train_pos = self._read_folder(os.path.join(path, "train", "pos"),
+                                      1, limit, preprocessing_function)
+        train_neg = self._read_folder(os.path.join(path, "train", "neg"),
+                                      0, limit, preprocessing_function)
+        test_pos = self._read_folder(os.path.join(path, "test", "pos"),
+                                     1, limit, preprocessing_function)
+        test_neg = self._read_folder(os.path.join(path, "test", "neg"),
+                                     0, limit, preprocessing_function)
 
         train_data = self._concat_and_shuffle_dataset(train_pos, train_neg)
         test_data = self._concat_and_shuffle_dataset(test_pos, test_neg)
