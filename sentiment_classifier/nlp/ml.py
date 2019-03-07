@@ -2,7 +2,6 @@ import os
 from keras.preprocessing.text import Tokenizer
 from keras import layers, models
 import pickle
-import numpy as np
 from abc import abstractmethod, ABC
 
 
