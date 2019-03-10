@@ -27,10 +27,12 @@ class Model(ABC):
     def train(self, reader):
         pass
 
-    @abstractmethod
     def predict(self, texts):
         if not (self.tokenizer and self.model):
             raise Exception("Model not trained")
+        texts = self.tokenizer.texts_to_matrix(texts)
+
+        return self.model.predict(texts)
 
 
 class LogisticRegression(Model):
@@ -61,9 +63,3 @@ class LogisticRegression(Model):
                        epochs=5)
 
         self.save()
-
-    def predict(self, texts):
-        super(LogisticRegression, self).predict(texts)
-        texts = self.tokenizer.texts_to_matrix(texts)
-
-        return self.model.predict(texts)
