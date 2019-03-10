@@ -5,12 +5,18 @@ from keras.preprocessing.text import Tokenizer
 from keras.models import Model
 
 
-class TestLogisticRegression(unittest.TestCase):
-    model = ml.LogisticRegression()
+class CommonTests(unittest.TestCase):
+    __test__ = False
+    model = None
+
+    @classmethod
+    def setUpClass(cls):
+        if cls is CommonTests:
+            raise unittest.SkipTest()
 
     def test_init(self):
-        self.assertEqual(TestLogisticRegression.model.model, None)
-        self.assertEqual(TestLogisticRegression.model.tokenizer, None)
+        self.assertEqual(self.model.model, None)
+        self.assertEqual(self.model.tokenizer, None)
 
     def test_train(self):
         imdb = reader.IMDBReader()
@@ -18,21 +24,24 @@ class TestLogisticRegression(unittest.TestCase):
                           limit=100,
                           preprocessing_function=preprocessing.clean_text)
 
-        TestLogisticRegression.model.train(reader=imdb)
+        self.model.train(reader=imdb)
 
-        self.assertIsInstance(TestLogisticRegression.model.tokenizer, Tokenizer)
-        self.assertIsInstance(TestLogisticRegression.model.model, Model)
+        self.assertIsInstance(self.model.tokenizer, Tokenizer)
+        self.assertIsInstance(self.model.model, Model)
 
     def test_load(self):
-        TestLogisticRegression.model.load()
+        self.model.load()
 
-        self.assertIsInstance(TestLogisticRegression.model.tokenizer, Tokenizer)
-        self.assertIsInstance(TestLogisticRegression.model.model, Model)
+        self.assertIsInstance(self.model.tokenizer, Tokenizer)
+        self.assertIsInstance(self.model.model, Model)
 
     def test_predict(self):
-        self.assertIsInstance(
-            TestLogisticRegression.model.predict([["hi there"]]),
-            np.ndarray)
-        self.assertEqual(
-            TestLogisticRegression.model.predict([["hi there"], ["how are you"]]).shape,
-            (2, 1))
+        self.model.load()
+        pred = self.model.predict([["hi there"], ["how are you"]])
+        self.assertIsInstance(pred, np.ndarray)
+        self.assertEqual(pred.shape, (2, 1))
+
+
+class TestLogisticRegression(CommonTests):
+    __test__ = True
+    model = ml.LogisticRegression()
