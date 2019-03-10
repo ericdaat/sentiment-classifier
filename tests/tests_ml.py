@@ -18,10 +18,10 @@ class CommonTests(unittest.TestCase):
         self.assertEqual(self.model.model, None)
         self.assertEqual(self.model.tokenizer, None)
 
-    def test_train(self):
+    def test_pipeline(self):
         imdb = reader.IMDBReader()
         imdb.load_dataset("data/aclImdb",
-                          limit=100,
+                          limit=10,
                           preprocessing_function=preprocessing.clean_text)
 
         self.model.train(reader=imdb)
@@ -29,19 +29,19 @@ class CommonTests(unittest.TestCase):
         self.assertIsInstance(self.model.tokenizer, Tokenizer)
         self.assertIsInstance(self.model.model, Model)
 
-    def test_load(self):
+        pred = self.model.predict([["hi there"], ["how are you"]])
+        self.assertIsInstance(pred, np.ndarray)
+        self.assertEqual(pred.shape, (2, 1))
+
         self.model.load()
 
         self.assertIsInstance(self.model.tokenizer, Tokenizer)
         self.assertIsInstance(self.model.model, Model)
 
-    def test_predict(self):
-        self.model.load()
-        pred = self.model.predict([["hi there"], ["how are you"]])
-        self.assertIsInstance(pred, np.ndarray)
-        self.assertEqual(pred.shape, (2, 1))
-
 
 class TestLogisticRegression(CommonTests):
-    __test__ = True
     model = ml.LogisticRegression()
+
+
+class TestCNN(CommonTests):
+    model = ml.CNN()
