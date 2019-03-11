@@ -11,7 +11,7 @@ def create_app():
     # proxy fix
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
-    model = ml.LogisticRegression()
+    model = ml.CNN()
     model.load()
 
     graph = tf.get_default_graph()

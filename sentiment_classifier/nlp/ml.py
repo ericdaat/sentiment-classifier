@@ -132,6 +132,11 @@ class CNN(Model):
                            optimizer="adam",
                            metrics=["binary_accuracy"])
 
+        self.model.fit(x=x_train,
+                       y=y_train,
+                       validation_data=(x_test, y_test),
+                       epochs=3)
+
         self.save()
 
     def predict(self, texts):
