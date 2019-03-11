@@ -5,6 +5,7 @@ from keras import layers, models
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from nlp.utils import load_word_vectors
+from nlp.preprocessing import clean_text
 
 
 class Model(ABC):
@@ -34,9 +35,11 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def predict(self, texts):
+    def predict(self, sentence):
         if not (self.tokenizer and self.model):
             raise Exception("Model not trained")
+
+        return [clean_text(s) for s in sentence]
 
 
 class LogisticRegression(Model):
@@ -73,11 +76,11 @@ class LogisticRegression(Model):
 
         self.save()
         
-    def predict(self, texts):
-        super(LogisticRegression, self).predict(texts)
-        texts = self.tokenizer.texts_to_matrix(texts)
+    def predict(self, sentence):
+        sentence = super(LogisticRegression, self).predict(sentence)
+        sentence = self.tokenizer.texts_to_matrix(sentence)
 
-        return self.model.predict(texts)
+        return self.model.predict(sentence)[0][0]
 
 
 class CNN(Model):
@@ -113,35 +116,33 @@ class CNN(Model):
         text_embedding = embedding_layer(i)
         convs = []
 
-        for layer_params in [(3, 5), (3, 4)]:
+        for layer_params in [(4, 3), (4, 4), (4, 5)]:
             conv = layers.Conv1D(filters=layer_params[0],
                                  kernel_size=layer_params[1],
                                  activation="relu")(text_embedding)
-            conv = layers.MaxPooling1D(pool_size=2)(conv)
-            conv = layers.Flatten()(conv)
+            conv = layers.GlobalMaxPooling1D()(conv)
             convs.append(conv)
 
         concat = layers.concatenate(convs)
-        hidden = layers.Dense(128, activation="relu")(concat)
-        hidden = layers.Dropout(0.3)(hidden)
-        output = layers.Dense(1, activation="sigmoid")(hidden)
+        hidden = layers.Dropout(0.5)(concat)
+        output = layers.Dense(2, activation="softmax")(hidden)
 
         self.model = models.Model(inputs=[i], outputs=[output])
 
-        self.model.compile(loss="binary_crossentropy",
+        self.model.compile(loss="sparse_categorical_crossentropy",
                            optimizer="adam",
-                           metrics=["binary_accuracy"])
+                           metrics=["accuracy"])
 
         self.model.fit(x=x_train,
                        y=y_train,
                        validation_data=(x_test, y_test),
-                       epochs=3)
+                       epochs=1)
 
         self.save()
 
-    def predict(self, texts):
-        super(CNN, self).predict(texts)
-        texts = self.tokenizer.texts_to_sequences(texts)
-        texts = pad_sequences(texts, 1000)
+    def predict(self, sentence):
+        sentence = super(CNN, self).predict(sentence)
+        sentence = self.tokenizer.texts_to_sequences(sentence)
+        sentence = pad_sequences(sentence, 1000)
 
-        return self.model.predict(texts)
+        return self.model.predict(sentence)[0][1]

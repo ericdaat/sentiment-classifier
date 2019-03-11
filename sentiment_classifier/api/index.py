@@ -14,14 +14,13 @@ def classify():
     text = data.get("text")
 
     with current_app.graph.as_default():
-        prediction = current_app.nlp_model.predict([text])
-        proba = prediction[0][0]
+        score = current_app.nlp_model.predict([text])
 
-        if proba > 0.5:
+        if score > 0.5:
             sentiment = "pos"
         else:
             sentiment = "neg"
 
     return jsonify(text=text,
                    sentiment=sentiment,
-                   score=str(proba))
+                   score="{0:0.3f}".format(score))
