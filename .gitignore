@@ -6,3 +6,5 @@ venv
 data
 bin
 *.vec
+docs/build
+.DS_Store
