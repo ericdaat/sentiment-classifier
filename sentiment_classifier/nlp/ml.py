@@ -1,3 +1,10 @@
+""" Module for Machine Learning models.
+
+Here we define the Machine Learning models that we use
+for detecting the sentiment on a given sentence.
+Each model inherits from the `Model` abstract class
+and must implement the required methods.
+"""
 import os
 import pickle
 from abc import abstractmethod, ABC
@@ -15,12 +22,22 @@ class Model(ABC):
         self.model = None
 
     def save(self):
+        """ Saves the model weights and tokenizer
+
+        Returns:
+            None
+        """
         self.model.save(os.path.join("bin", "{0}_model.pkl".format(self.name)))
 
         with open(os.path.join("bin", "{0}_tokenizer.pkl".format(self.name)), "wb") as f:
             pickle.dump(self.tokenizer, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     def load(self):
+        """ Load the model weights and tokenizer
+
+        Returns:
+            None
+        """
         self.model = models.load_model(os.path.join("bin", "{0}_model.pkl".format(self.name)))
 
         with open(os.path.join("bin", "{0}_tokenizer.pkl".format(self.name)), "rb") as f:
@@ -28,21 +45,60 @@ class Model(ABC):
 
     @abstractmethod
     def train(self, reader):
+        """ Method for training the model. Must be implemented by
+        the subclasses.
+
+        Args:
+            reader (nlp.reader.Reader): a Reader instance that contains
+            the data to train the model on.
+
+        Returns:
+            None
+
+        """
         pass
 
     @abstractmethod
     def _make_training_data(self, reader):
+        """ Method for preparing the training matrices.
+
+        This function fits the tokenizer and creates train/test matrices.
+
+        Args:
+            reader (nlp.reader.Reader): a Reader instance that contains
+            the data to train the model on.
+
+        Returns:
+            x_train (np.ndarray)
+            x_test (np.ndarray)
+            y_train (np.ndarray)
+            y_test (np.ndarray)
+
+        """
         pass
 
     @abstractmethod
     def predict(self, sentence):
+        """ Predict on a sentence
+
+        Args:
+            sentence (np.ndarray): the sentence to predict on
+
+        Returns:
+            cleaned_sentence (list): the cleaned sentence
+        """
         if not (self.tokenizer and self.model):
             raise Exception("Model not trained")
 
-        return [clean_text(s) for s in sentence]
+        cleaned_sentence = [clean_text(sentence[0])]
+
+        return cleaned_sentence
 
 
 class LogisticRegression(Model):
+    """ Linear Model that works on one hot word encoding.
+    Basic but works pretty well on simple sentences.
+    """
     def __init__(self):
         super(LogisticRegression, self).__init__()
 
@@ -51,10 +107,10 @@ class LogisticRegression(Model):
         self.tokenizer.fit_on_texts(reader.train_data["review"])
 
         x_train = self.tokenizer.texts_to_matrix(reader.train_data["review"])
-        y_train = reader.train_data["label"]
+        y_train = reader.train_data["label"].values
 
         x_test = self.tokenizer.texts_to_matrix(reader.test_data["review"])
-        y_test = reader.test_data["label"]
+        y_test = reader.test_data["label"].values
 
         return x_train, x_test, y_train, y_test
 
@@ -93,17 +149,17 @@ class CNN(Model):
 
         x_train = self.tokenizer.texts_to_sequences(reader.train_data["review"])
         x_train = pad_sequences(x_train, maxlen=1000)
-        y_train = reader.train_data["label"]
+        y_train = reader.train_data["label"].values
 
         x_test = self.tokenizer.texts_to_sequences(reader.test_data["review"])
         x_test = pad_sequences(x_test, maxlen=1000)
-        y_test = reader.test_data["label"]
+        y_test = reader.test_data["label"].values
 
         return x_train, x_test, y_train, y_test
 
     def train(self, reader):
         x_train, x_test, y_train, y_test = self._make_training_data(reader)
-        word_vectors = load_word_vectors(fname="data/wiki-news-300d-1M.vec",
+        word_vectors = load_word_vectors(filepath="data/wiki-news-300d-1M.vec",
                                          word_index=self.tokenizer.word_index,
                                          vector_size=300)
 
@@ -116,7 +172,7 @@ class CNN(Model):
         text_embedding = embedding_layer(i)
         convs = []
 
-        for layer_params in [(4, 3), (4, 4), (4, 5)]:
+        for layer_params in [(10, 2), (10, 3), (10, 4)]:
             conv = layers.Conv1D(filters=layer_params[0],
                                  kernel_size=layer_params[1],
                                  activation="relu")(text_embedding)
@@ -136,7 +192,7 @@ class CNN(Model):
         self.model.fit(x=x_train,
                        y=y_train,
                        validation_data=(x_test, y_test),
-                       epochs=1)
+                       epochs=5)
 
         self.save()
 

@@ -2,12 +2,22 @@ import os
 import pandas as pd
 from glob import glob
 import io
+from abc import ABC, abstractmethod
 
 
-class IMDBReader(object):
+class Reader(ABC):
     def __init__(self):
         self.train_data = None
         self.test_data = None
+
+    @abstractmethod
+    def load_dataset(self, path, limit=None, preprocessing_function=None):
+        pass
+
+
+class IMDBReader(Reader):
+    def __init__(self):
+        super(IMDBReader, self).__init__()
 
     def _read_folder(self, path, label, limit, preprocessing_function):
         texts = []
