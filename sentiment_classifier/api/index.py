@@ -33,7 +33,8 @@ def classify():
     text = data.get("text")
 
     with current_app.graph.as_default():
-        score = current_app.nlp_model.predict([text])
+        predictions = current_app.nlp_model.predict([text])
+        score = predictions[0][0]
 
         if score > 0.5:
             sentiment = "pos"

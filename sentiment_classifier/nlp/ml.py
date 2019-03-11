@@ -7,6 +7,7 @@ and must implement the required methods.
 """
 import os
 import pickle
+import numpy as np
 from abc import abstractmethod, ABC
 from keras import layers, models
 from keras.preprocessing.text import Tokenizer
@@ -78,21 +79,26 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def predict(self, sentence):
+    def predict(self, texts):
         """ Predict on a sentence
 
         Args:
-            sentence (np.ndarray): the sentence to predict on
+            texts (np.ndarray): the texts to predict on
 
         Returns:
-            cleaned_sentence (list): the cleaned sentence
+            cleaned_texts(list): the cleaned texts
         """
         if not (self.tokenizer and self.model):
             raise Exception("Model not trained")
 
-        cleaned_sentence = [clean_text(sentence[0])]
+        if isinstance(texts[0], str):
+            cleaned_texts = [clean_text(s) for s in texts]
+        elif isinstance(texts[0], list):
+            cleaned_texts = [clean_text(s[0]) for s in texts]
+        else:
+            raise Exception("Wrong input kind for texts")
 
-        return cleaned_sentence
+        return cleaned_texts
 
 
 class LogisticRegression(Model):
@@ -132,11 +138,13 @@ class LogisticRegression(Model):
 
         self.save()
         
-    def predict(self, sentence):
-        sentence = super(LogisticRegression, self).predict(sentence)
-        sentence = self.tokenizer.texts_to_matrix(sentence)
+    def predict(self, texts):
+        texts = super(LogisticRegression, self).predict(texts)
+        texts = self.tokenizer.texts_to_matrix(texts)
 
-        return self.model.predict(sentence)[0][0]
+        predictions = self.model.predict(texts)
+
+        return predictions
 
 
 class CNN(Model):
@@ -196,9 +204,11 @@ class CNN(Model):
 
         self.save()
 
-    def predict(self, sentence):
-        sentence = super(CNN, self).predict(sentence)
-        sentence = self.tokenizer.texts_to_sequences(sentence)
-        sentence = pad_sequences(sentence, 1000)
+    def predict(self, texts):
+        texts = super(CNN, self).predict(texts)
+        texts = self.tokenizer.texts_to_sequences(texts)
+        texts = pad_sequences(texts, 1000)
 
-        return self.model.predict(sentence)[0][1]
+        predictions = self.model.predict(texts)
+
+        return np.asarray([[p[1]] for p in predictions])
