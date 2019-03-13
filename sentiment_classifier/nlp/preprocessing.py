@@ -1,4 +1,14 @@
 """ Module for text pre-processing
+
+We provide a basic test preprocessing function, that does the following tasks:
+
+ - Removes HTML
+ - Surround punctuation and special characters by spaces
+This function can be passed to a Reader instance when loading the dataset.
+Note: we did not lowercase the sentence, or removed the special characters
+on purpose. We think this information can make a difference in
+classifying sentiments. We are also using Word Embeddings,
+and the embeddings are different on lowercase vs uppercase words.
 """
 
 import re

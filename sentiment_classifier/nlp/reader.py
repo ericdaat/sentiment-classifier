@@ -1,3 +1,15 @@
+"""
+We are using the IMDB Large Movie Reviews dataset from Stanford AI.
+
+It provides 50,000 reviews on movies, splitted half-half in train/test
+and labelled as positive or negative.
+We provide an abstract class Reader that we can subclass for each dataset.
+
+We do this to standardise the dataset loading, and make it easy to use multiple
+datasets in the rest of the code with a common interface.
+
+The IMDBReader class implements all the code needed to load the IMDB dataset.
+"""
 import os
 import pandas as pd
 from glob import glob

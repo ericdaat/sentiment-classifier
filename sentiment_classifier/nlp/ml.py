@@ -1,9 +1,18 @@
 """ Module for Machine Learning models.
 
-Here we define the Machine Learning models that we use
-for detecting the sentiment on a given sentence.
-Each model inherits from the `Model` abstract class
-and must implement the required methods.
+This module hosts the Machine Learning models. Every model subclasses a
+Model abstract class that has the following attributes:
+
+ - model: the ML model, so far built using Keras
+ - tokenizer: responsible for mapping words into indices
+
+The Model class implements the following methods:
+
+ - train: trains the model
+ - save: saves the model weights & tokenizer
+ - predict: predicts on sentences
+ - _make_training_data: a private method that creates the train/test
+ matrices from a Reader object
 """
 import os
 import pickle
