@@ -14,6 +14,7 @@ It is written in Python and uses the following libraries:
 Here are the required steps to get started with the API:
 
 - Clone the repository
+
 - Download the IMDB dataset and place it in the data folder.
 We use pre-trained word embeddings from FastText, so you might 
 want to download them to the data folder as well:
@@ -22,15 +23,19 @@ want to download them to the data folder as well:
   
 - Create a virtual environment, and install the requirements
 from `requirements.txt` file
+
 - Add "sentiment_classifier" to your `PYTHONPATH`:
+
 ``` text
 export PYTHONPATH=sentiment_classifier:$PYTHONPATH
 ```
 - Train the models by running:
+
 ``` text
 python sentiment_classifier/scripts/train.py
 ```
 - Run the API:
+
 ``` text
 python sentiment_classifier/api/wsgi.py
 ```
