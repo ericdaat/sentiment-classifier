@@ -22,11 +22,7 @@ def classify():
     """ api method for predicting the sentiment on a given sequence.
 
     Returns:
-        A json in the following format:
-        ```
-        {"text": "love it",
-         "sentiment": "pos",
-         "score": 0.7}
+        A json with text, sentiment and score
 
     """
     data = request.get_json()
