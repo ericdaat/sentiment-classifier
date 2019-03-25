@@ -9,6 +9,8 @@ It is written in Python and uses the following libraries:
 - Flask: for the API
 - Keras: for the Machine Learning Models
 
+For more details about the project, you can refer to [these slides](https://github.com/ericdaat/slides/blob/master/sentiment_classifier_api.pdf).
+
 ## Installation
 
 Here are the required steps to get started with the API:
