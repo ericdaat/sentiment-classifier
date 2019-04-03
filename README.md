@@ -1,5 +1,7 @@
 # Sentiment Classifier
 
+[![Documentation Status](https://readthedocs.org/projects/sentiment-classifier-api/badge/?version=latest)](https://sentiment-classifier-api.readthedocs.io/en/latest/?badge=latest)
+
 ## About
 
 The goal of this project was to create a sentiment classifier
