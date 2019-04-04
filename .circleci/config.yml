@@ -50,12 +50,6 @@ jobs:
             wget -nv https://dl.fbaipublicfiles.com/fasttext/vectors-english/wiki-news-300d-1M.vec.zip
             unzip wiki-news-300d-1M.vec.zip
 
-      - save_cache:
-          paths:
-            - ./data/aclImdb
-            - ./data/wiki-news-300d-1M.vec
-          key: data
-
       - run:
           name: run tests
           command: |
