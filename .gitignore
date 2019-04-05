@@ -8,3 +8,5 @@ bin
 *.vec
 docs/build
 .DS_Store
+.tar.gz
+.zip

@@ -8,7 +8,7 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.1
+      - image: ericda/sentiment-classifier:latest
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -45,9 +45,9 @@ jobs:
           command: |
             mkdir -p data
             cd data
-            wget -nv http://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz
+            mv /opt/sentiment-classifier/data/aclImdb_v1.tar.gz .
+            mv /opt/sentiment-classifier/data/wiki-news-300d-1M.vec.zip .
             tar -xzf aclImdb_v1.tar.gz
-            wget -nv https://dl.fbaipublicfiles.com/fasttext/vectors-english/wiki-news-300d-1M.vec.zip
             unzip wiki-news-300d-1M.vec.zip
 
       - run:
