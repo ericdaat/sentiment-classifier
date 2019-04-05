@@ -1,5 +1,6 @@
 # Sentiment Classifier
 
+[![CircleCI](https://circleci.com/gh/ericdaat/sentiment-classifier/tree/master.svg?style=svg)](https://circleci.com/gh/ericdaat/sentiment-classifier/tree/master)
 [![Documentation Status](https://readthedocs.org/projects/sentiment-classifier-api/badge/?version=latest)](https://sentiment-classifier-api.readthedocs.io/en/latest/?badge=latest)
 
 ## About

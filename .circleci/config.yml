@@ -8,7 +8,7 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.1
+      - image: ericda/sentiment-classifier:latest
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -29,7 +29,7 @@ jobs:
             - data
 
       - run:
-          name: install dependencies
+          name: Install dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
@@ -41,27 +41,25 @@ jobs:
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
       - run:
-          name: download data
+          name: Download training data
           command: |
             mkdir -p data
             cd data
-            wget http://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz
-            tar -xvzf aclImdb_v1.tar.gz
-            wget https://dl.fbaipublicfiles.com/fasttext/vectors-english/wiki-news-300d-1M.vec.zip
-            tar -xvf wiki-news-300d-1M.vec.zip
-
-      - save_cache:
-          paths:
-            - ./data/aclImdb
-            - ./data/wiki-news-300d-1M.vec
-          key: data
+            mv /opt/sentiment-classifier/data/aclImdb_v1.tar.gz .
+            mv /opt/sentiment-classifier/data/wiki-news-300d-1M.vec.zip .
+            tar -xzf aclImdb_v1.tar.gz
+            unzip wiki-news-300d-1M.vec.zip
 
       - run:
-          name: run tests
+          name: Run unit tests
           command: |
             . venv/bin/activate
             export $(cat .env | xargs)
-            python -m unittest discover -s tests;
+            # python -m unittest discover -s tests;  # TODO: fix test order
+            python -m unittest tests/test_preprocessing.py
+            python -m unittest tests/test_reader.py
+            python -m unittest tests/test_ml.py
+            python -m unittest tests/test_api.py
 
       - store_artifacts:
           path: test-reports
