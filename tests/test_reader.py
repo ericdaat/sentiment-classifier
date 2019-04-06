@@ -15,9 +15,10 @@ class TestImdb(unittest.TestCase):
         limit = 5
 
         for preprocessing_function in [None, clean_text]:
-            TestImdb.imdb.load_dataset("data/aclImdb",
-                                       limit=limit,
-                                       preprocessing_function=preprocessing_function)
+            TestImdb.imdb.load_dataset(
+                limit=limit,
+                preprocessing_function=preprocessing_function
+            )
 
             # test type
             self.assertIsInstance(TestImdb.imdb.train_data, pd.DataFrame)
