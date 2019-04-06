@@ -31,36 +31,46 @@ class Model(ABC):
         self.tokenizer = None
         self.model = None
 
-    def save(self):
-        """ Saves the model weights and tokenizer
+    def save(self, filepath):
+        """Save the model weights and tokenizer
 
-        Returns:
-            None
+        Args:
+            filepath (str): Path where to store the model.
         """
-        self.model.save(os.path.join("bin", "{0}_model.pkl".format(self.name)))
 
-        with open(os.path.join("bin", "{0}_tokenizer.pkl".format(self.name)), "wb") as f:
+        os.makedirs(filepath, exist_ok=True)
+
+        self.model.save(
+            os.path.join(
+                filepath,
+                "{0}_model.pkl".format(self.name)
+            )
+        )
+
+        with open(os.path.join(filepath, "{0}_tokenizer.pkl".format(self.name)), "wb") as f:
             pickle.dump(self.tokenizer, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def load(self):
+    def load(self, filepath):
         """ Load the model weights and tokenizer
 
-        Returns:
-            None
+        Args:
+            filepath (str): Path where to load the model.
         """
-        self.model = models.load_model(os.path.join("bin", "{0}_model.pkl".format(self.name)))
+        self.model = models.load_model(os.path.join(filepath, "{0}_model.pkl".format(self.name)))
 
-        with open(os.path.join("bin", "{0}_tokenizer.pkl".format(self.name)), "rb") as f:
+        with open(os.path.join(filepath, "{0}_tokenizer.pkl".format(self.name)), "rb") as f:
             self.tokenizer = pickle.load(f)
 
+
     @abstractmethod
-    def train(self, reader):
+    def train(self, reader, filepath):
         """ Method for training the model. Must be implemented by
         the subclasses.
 
         Args:
             reader (nlp.reader.Reader): a Reader instance that contains
             the data to train the model on.
+            filepath (str): path to where the model will be stored
 
         Returns:
             None
@@ -129,7 +139,7 @@ class LogisticRegression(Model):
 
         return x_train, x_test, y_train, y_test
 
-    def train(self, reader):
+    def train(self, reader, filepath):
         x_train, x_test, y_train, y_test = self._make_training_data(reader)
 
         i = layers.Input(shape=(x_train.shape[1],))
@@ -145,8 +155,8 @@ class LogisticRegression(Model):
                        validation_data=(x_test, y_test),
                        epochs=5)
 
-        self.save()
-        
+        self.save(filepath)
+
     def predict(self, texts):
         texts = super(LogisticRegression, self).predict(texts)
         texts = self.tokenizer.texts_to_matrix(texts)
@@ -174,7 +184,7 @@ class CNN(Model):
 
         return x_train, x_test, y_train, y_test
 
-    def train(self, reader):
+    def train(self, reader, filepath):
         x_train, x_test, y_train, y_test = self._make_training_data(reader)
         word_vectors = load_word_vectors(filepath="data/wiki-news-300d-1M.vec",
                                          word_index=self.tokenizer.word_index,
@@ -211,7 +221,7 @@ class CNN(Model):
                        validation_data=(x_test, y_test),
                        epochs=5)
 
-        self.save()
+        self.save(filepath)
 
     def predict(self, texts):
         texts = super(CNN, self).predict(texts)

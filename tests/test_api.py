@@ -1,8 +1,10 @@
 import unittest
 import json
+import os
+from config import TEST_MODEL_FILEPATH
 from api import create_app
 
-app = create_app()
+app = create_app(model_filepath=TEST_MODEL_FILEPATH)
 client = app.test_client()
 
 mimetype = "application/json"

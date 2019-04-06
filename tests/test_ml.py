@@ -1,8 +1,10 @@
 import unittest
 import numpy as np
+import os
 from nlp import ml, reader, preprocessing
 from keras.preprocessing.text import Tokenizer
 from keras.models import Model
+from config import TEST_MODEL_FILEPATH
 
 
 class CommonTests(unittest.TestCase):
@@ -20,11 +22,15 @@ class CommonTests(unittest.TestCase):
 
     def test_pipeline(self):
         imdb = reader.IMDBReader()
-        imdb.load_dataset("data/aclImdb",
-                          limit=10,
-                          preprocessing_function=preprocessing.clean_text)
+        imdb.load_dataset(
+            limit=10,
+            preprocessing_function=preprocessing.clean_text
+        )
 
-        self.model.train(reader=imdb)
+        self.model.train(
+            reader=imdb,
+            filepath=TEST_MODEL_FILEPATH
+        )
 
         self.assertIsInstance(self.model.tokenizer, Tokenizer)
         self.assertIsInstance(self.model.model, Model)
@@ -33,7 +39,9 @@ class CommonTests(unittest.TestCase):
         self.assertIsInstance(pred, np.ndarray)
         self.assertEqual(pred.shape, (2, 1))
 
-        self.model.load()
+        self.model.load(
+            filepath=TEST_MODEL_FILEPATH
+        )
 
         self.assertIsInstance(self.model.tokenizer, Tokenizer)
         self.assertIsInstance(self.model.model, Model)

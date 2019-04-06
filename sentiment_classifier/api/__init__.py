@@ -17,7 +17,7 @@ import tensorflow as tf
 from nlp import ml
 
 
-def create_app():
+def create_app(model_filepath):
     """ Flask app factory method
 
     Returns:
@@ -30,7 +30,7 @@ def create_app():
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
     model = ml.CNN()  # TODO: config variable to chose the model to use
-    model.load()
+    model.load(filepath=model_filepath)
 
     graph = tf.get_default_graph()
     app.nlp_model = model

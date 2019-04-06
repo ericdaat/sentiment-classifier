@@ -30,6 +30,7 @@ class Reader(ABC):
 class IMDBReader(Reader):
     def __init__(self):
         super(IMDBReader, self).__init__()
+        self.path = os.path.join("data", "aclImdb")
 
     def _read_folder(self, path, label, limit, preprocessing_function):
         texts = []
@@ -55,15 +56,31 @@ class IMDBReader(Reader):
 
         return df
 
-    def load_dataset(self, path, limit=None, preprocessing_function=None):
-        train_pos = self._read_folder(os.path.join(path, "train", "pos"),
-                                      1, limit, preprocessing_function)
-        train_neg = self._read_folder(os.path.join(path, "train", "neg"),
-                                      0, limit, preprocessing_function)
-        test_pos = self._read_folder(os.path.join(path, "test", "pos"),
-                                     1, limit, preprocessing_function)
-        test_neg = self._read_folder(os.path.join(path, "test", "neg"),
-                                     0, limit, preprocessing_function)
+    def load_dataset(self, limit=None, preprocessing_function=None):
+        train_pos = self._read_folder(
+            path=os.path.join(self.path, "train", "pos"),
+            label=1,
+            limit=limit,
+            preprocessing_function=preprocessing_function
+        )
+        train_neg = self._read_folder(
+            path=os.path.join(self.path, "train", "neg"),
+            label=0,
+            limit=limit,
+            preprocessing_function=preprocessing_function
+        )
+        test_pos = self._read_folder(
+            path=os.path.join(self.path, "test", "pos"),
+            label=1,
+            limit=limit,
+            preprocessing_function=preprocessing_function
+        )
+        test_neg = self._read_folder(
+            path=os.path.join(self.path, "test", "neg"),
+            label=0,
+            limit=limit,
+            preprocessing_function=preprocessing_function
+        )
 
         train_data = self._concat_and_shuffle_dataset(train_pos, train_neg)
         test_data = self._concat_and_shuffle_dataset(test_pos, test_neg)
