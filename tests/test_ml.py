@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from nlp import reader, preprocessing, tokenizer
-from nlp.models import shallow_networks, deep_networks
+from nlp.models import CNN, LogisticRegression
 from keras.models import Model
 from config import TEST_MODEL_FILEPATH
 
@@ -51,8 +51,8 @@ class CommonTests(unittest.TestCase):
 
 
 class TestLogisticRegression(CommonTests):
-    model = shallow_networks.LogisticRegression()
+    model = LogisticRegression()
 
 
 class TestCNN(CommonTests):
-    model = deep_networks.CNN()
+    model = CNN()
