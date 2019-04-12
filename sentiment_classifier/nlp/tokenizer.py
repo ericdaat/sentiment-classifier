@@ -1,3 +1,13 @@
+"""
+This module abstracts the tokenizer object, so that we can use \
+    tokenizers from different libraries and provide the same \
+    interface. Hence, we won't need \
+    to change the rest of the code when changing tokenizers.
+
+So far we only have one tokenizer, based on keras.preprocessing.text.Tokenizer.
+"""
+
+
 import pickle
 from abc import ABC, abstractmethod
 from keras.preprocessing.text import Tokenizer
@@ -10,17 +20,43 @@ class BaseTokenizer(ABC):
 
     @abstractmethod
     def fit(self, train_data):
+        """ Fit the tokenizer on the training data.
+
+        Args:
+            train_data (list): List of texts to fit the tokenizer on.
+        """
+
         pass
 
     @abstractmethod
     def transform(self, data):
+        """ Predict on data.
+
+        Args:
+            data (list): List of texts to predict on
+        """
+
         pass
 
     def save(self, filename):
+        """ Persist the tokenizer to disk
+
+        Args:
+            filename (str): Path to save to.
+        """
+
         with open(filename, "wb") as f:
             pickle.dump(self.tokenizer, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     def load(self, filepath):
+        """ Load the tokenizer from disk
+
+        Args:
+            filename (str): Path to load the tokenizer from
+
+        Returns:
+            self (BaseTokenizer): the tokenizer itself, with loaded data
+        """
         with open(filepath, "rb") as f:
             self.tokenizer = pickle.load(f)
 

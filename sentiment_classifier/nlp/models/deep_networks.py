@@ -1,3 +1,11 @@
+""" Code for deep neural networks models.
+
+So far we have:
+
+- CNN: Implementation of the paper "Convolutional Neural Networks \
+    for Sentence Classification" by Yoon Kim.
+"""
+
 import os
 from nlp.models import Model
 from nlp.tokenizer import KerasTokenizer

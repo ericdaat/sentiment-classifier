@@ -15,7 +15,7 @@ def index():
     Returns:
         json
     """
-    return jsonify(hello="there")
+    return jsonify(status="running")
 
 
 @bp.route("/api/classify", methods=("POST",))
@@ -41,6 +41,8 @@ def classify():
         else:
             sentiment = "neg"
 
-    return jsonify(text=text,
-                   sentiment=sentiment,
-                   score="{0:0.3f}".format(score))
+    return jsonify(
+        text=text,
+        sentiment=sentiment,
+        score="{0:0.3f}".format(score)
+    )

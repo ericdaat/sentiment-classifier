@@ -1,18 +1,19 @@
-""" Module for Machine Learning models.
+""" Module containing the root Model class that every new model \
+    must inherit from.
 
-This module hosts the Machine Learning models. Every model subclasses a
-Model abstract class that has the following attributes:
+The Model class has the following attributes:
 
  - model: the ML model, so far built using Keras
  - tokenizer: responsible for mapping words into indices
 
 The Model class implements the following methods:
 
+ - build_model: builds the model
  - train: trains the model
  - save: saves the model weights & tokenizer
  - predict: predicts on sentences
- - _make_training_data: a private method that creates the train/test
- matrices from a Reader object
+ - _make_training_data: a private method that creates the train/test \
+    matrices from a Reader object
 """
 import os
 from abc import abstractmethod, ABC
@@ -31,8 +32,8 @@ class Model(ABC):
         This function fits the tokenizer and creates train/test matrices.
 
         Args:
-            reader (nlp.reader.Reader): a Reader instance that contains
-            the data to train the model on.
+            reader (nlp.reader.Reader): a Reader instance that contains \
+                the data to train the model on.
 
         Returns:
             x_train (np.ndarray)
@@ -99,8 +100,8 @@ class Model(ABC):
         the subclasses.
 
         Args:
-            reader (nlp.reader.Reader): a Reader instance that contains
-            the data to train the model on.
+            reader (nlp.reader.Reader): a Reader instance that contains \
+                the data to train the model on.
             filepath (str): path to where the model will be stored
 
         Returns:
@@ -114,6 +115,8 @@ class Model(ABC):
 
         Args:
             texts (np.ndarray): the texts to predict on
+            preprocessing_function: a preprocessing function, \
+                from nlp.preprocessing module.
 
         Returns:
             cleaned_texts(list): the cleaned texts
