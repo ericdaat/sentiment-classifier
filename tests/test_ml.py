@@ -1,8 +1,6 @@
 import unittest
 import numpy as np
-import os
-from nlp import ml, reader, preprocessing
-from keras.preprocessing.text import Tokenizer
+from nlp import ml, reader, preprocessing, tokenizer
 from keras.models import Model
 from config import TEST_MODEL_FILEPATH
 
@@ -18,7 +16,7 @@ class CommonTests(unittest.TestCase):
 
     def test_init(self):
         self.assertEqual(self.model.model, None)
-        self.assertEqual(self.model.tokenizer, None)
+        self.assertIsInstance(self.model.tokenizer, tokenizer.BaseTokenizer)
 
     def test_pipeline(self):
         imdb = reader.IMDBReader()
@@ -32,7 +30,7 @@ class CommonTests(unittest.TestCase):
             filepath=TEST_MODEL_FILEPATH
         )
 
-        self.assertIsInstance(self.model.tokenizer, Tokenizer)
+        self.assertIsInstance(self.model.tokenizer, tokenizer.BaseTokenizer)
         self.assertIsInstance(self.model.model, Model)
 
         pred = self.model.predict([["hi there"], ["how are you"]])
@@ -43,7 +41,7 @@ class CommonTests(unittest.TestCase):
             filepath=TEST_MODEL_FILEPATH
         )
 
-        self.assertIsInstance(self.model.tokenizer, Tokenizer)
+        self.assertIsInstance(self.model.tokenizer, tokenizer.BaseTokenizer)
         self.assertIsInstance(self.model.model, Model)
 
 
