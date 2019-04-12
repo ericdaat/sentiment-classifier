@@ -1,6 +1,6 @@
 import logging
 from nlp import reader, preprocessing
-from nlp.models import deep_networks, shallow_networks
+from nlp.models import LogisticRegression, CNN
 from config import PROD_MODEL_FILEPATH
 
 
@@ -14,8 +14,8 @@ def main():
     )
 
     models_to_train = [
-        shallow_networks.LogisticRegression(),
-        deep_networks.CNN()
+        # LogisticRegression(),
+        CNN()
     ]
 
     for model in models_to_train:
