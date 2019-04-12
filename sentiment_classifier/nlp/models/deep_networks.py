@@ -13,9 +13,7 @@ class CNN(Model):
             lower=False
         )
 
-    def train(self, reader, filepath):
-        x_train, x_test, y_train, y_test = self._make_training_data(reader)
-
+    def build_model(self, input_shape):
         word_vectors = load_word_vectors(
             filepath="data/wiki-news-300d-1M.vec",
             word_index=self.tokenizer.tokenizer.word_index,
@@ -29,7 +27,7 @@ class CNN(Model):
             trainable=False
         )
 
-        i = layers.Input(shape=(x_train.shape[1],))
+        i = layers.Input(shape=(input_shape,))
         text_embedding = embedding_layer(i)
         convs = []
 
@@ -46,7 +44,12 @@ class CNN(Model):
         concat = layers.concatenate(convs)
         output = layers.Dense(1, activation="sigmoid")(concat)
 
-        self.model = models.Model(inputs=[i], outputs=[output])
+        return models.Model(inputs=[i], outputs=[output])
+
+    def train(self, reader, filepath):
+        x_train, x_test, y_train, y_test = self._make_training_data(reader)
+
+        self.model = self.build_model(input_shape=x_train.shape[1])
 
         self.model.compile(
             loss="binary_crossentropy",

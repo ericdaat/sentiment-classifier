@@ -14,12 +14,18 @@ class LogisticRegression(Model):
             lower=True
         )
 
+    def build_model(self, input_shape):
+        i = layers.Input(shape=(input_shape,))
+        h = layers.Dense(units=1, activation="sigmoid")(i)
+
+        model = models.Model(inputs=[i], outputs=[h])
+
+        return model
+
     def train(self, reader, filepath):
         x_train, x_test, y_train, y_test = self._make_training_data(reader)
 
-        i = layers.Input(shape=(x_train.shape[1],))
-        h = layers.Dense(units=1, activation="sigmoid")(i)
-        self.model = models.Model(inputs=[i], outputs=[h])
+        self.model = self.build_model(input_shape=x_train.shape[1])
 
         self.model.compile(loss="binary_crossentropy",
                            optimizer="sgd",
