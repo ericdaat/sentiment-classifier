@@ -34,7 +34,11 @@ class CommonTests(unittest.TestCase):
         self.assertIsInstance(self.model.tokenizer, tokenizer.BaseTokenizer)
         self.assertIsInstance(self.model.model, Model)
 
-        pred = self.model.predict([["hi there"], ["how are you"]])
+        pred = self.model.predict(
+            texts=[["hi there"], ["how are you"]],
+            preprocessing_function=preprocessing.clean_text
+        )
+
         self.assertIsInstance(pred, np.ndarray)
         self.assertEqual(pred.shape, (2, 1))
 

@@ -16,7 +16,6 @@ The Model class implements the following methods:
 """
 import os
 from abc import abstractmethod, ABC
-from nlp.preprocessing import clean_text
 from keras import models
 
 
@@ -110,7 +109,7 @@ class Model(ABC):
         """
         pass
 
-    def predict(self, texts):
+    def predict(self, texts, preprocessing_function):
         """ Predict on a sentence
 
         Args:
@@ -123,9 +122,9 @@ class Model(ABC):
             raise Exception("Model not trained")
 
         if isinstance(texts[0], str):
-            cleaned_texts = [clean_text(s) for s in texts]
+            cleaned_texts = [preprocessing_function(s) for s in texts]
         elif isinstance(texts[0], list):
-            cleaned_texts = [clean_text(s[0]) for s in texts]
+            cleaned_texts = [preprocessing_function(s[0]) for s in texts]
         else:
             raise Exception("Wrong input kind for texts")
 
