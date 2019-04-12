@@ -94,6 +94,18 @@ class Model(ABC):
         self.tokenizer = self.tokenizer.load(tokenizer_filepath)
 
     @abstractmethod
+    def build_model(self, input_shape):
+        """ Method for building the model.
+
+        Args:
+            input_shape (int): Size of the input
+
+        Returns:
+            model (keras.Models): a keras model, to be compiled and trained
+        """
+        pass
+
+    @abstractmethod
     def train(self, reader, filepath):
         """ Method for training the model. Must be implemented by
         the subclasses.
