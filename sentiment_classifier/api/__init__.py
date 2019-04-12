@@ -14,7 +14,7 @@ from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
 import tensorflow as tf
 
-from nlp import ml
+from nlp.models.deep_networks import CNN
 
 
 def create_app(model_filepath):
@@ -29,7 +29,7 @@ def create_app(model_filepath):
     # proxy fix
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
-    model = ml.CNN()  # TODO: config variable to chose the model to use
+    model = CNN()  # TODO: config variable to chose the model to use
     model.load(filepath=model_filepath)
 
     graph = tf.get_default_graph()
