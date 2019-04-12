@@ -1,5 +1,6 @@
 import logging
-from nlp import ml, reader, preprocessing
+from nlp import reader, preprocessing
+from nlp.models import deep_networks, shallow_networks
 from config import PROD_MODEL_FILEPATH
 
 
@@ -12,7 +13,12 @@ def main():
         preprocessing_function=preprocessing.clean_text
     )
 
-    for model in [ml.LogisticRegression(), ml.CNN()]:
+    models_to_train = [
+        shallow_networks.LogisticRegression(),
+        deep_networks.CNN()
+    ]
+
+    for model in models_to_train:
         model.train(reader=imdb, filepath=PROD_MODEL_FILEPATH)
 
 
