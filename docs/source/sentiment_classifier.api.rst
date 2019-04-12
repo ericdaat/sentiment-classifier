@@ -1,7 +1,7 @@
 sentiment\_classifier.api package
 =================================
 
-.. automodule:: api
+.. automodule:: sentiment_classifier.api
     :members:
     :undoc-members:
     :show-inheritance:
@@ -12,7 +12,7 @@ Submodules
 sentiment\_classifier.api.index module
 --------------------------------------
 
-.. automodule:: api.index
+.. automodule:: sentiment_classifier.api.index
     :members:
     :undoc-members:
     :show-inheritance:
@@ -20,7 +20,7 @@ sentiment\_classifier.api.index module
 sentiment\_classifier.api.wsgi module
 -------------------------------------
 
-.. automodule:: api.wsgi
+.. automodule:: sentiment_classifier.api.wsgi
     :members:
     :undoc-members:
     :show-inheritance:

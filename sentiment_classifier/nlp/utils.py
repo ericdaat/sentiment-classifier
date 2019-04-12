@@ -8,13 +8,13 @@ def load_word_vectors(filepath, word_index, vector_size):
     Args:
         filepath (str): path to the embedding file
         word_index (dict): word indices from the keras Tokenizer
-        vector_size (int): embedding dimension, must match the
-        trained word vectors
+        vector_size (int): embedding dimension, must match the \
+            trained word vectors
 
     Returns:
-        embedding_matrix (np.ndarray): a matrix of size
-        (len(word_index) * vector_size) that assigns each word
-        to its learned embedding.
+        embedding_matrix (np.ndarray): a matrix of size \
+            (len(word_index) * vector_size) that assigns each word \
+            to its learned embedding.
 
     """
     embedding_matrix = np.zeros((len(word_index) + 1, vector_size))

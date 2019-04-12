@@ -1,3 +1,10 @@
+""" Code for shallow neural networks models.
+
+So far we have:
+ - LogisticRegression: Basic Logistic Regression model, that serves \
+    as baseline.
+"""
+
 from nlp.models import Model
 from nlp.tokenizer import KerasTokenizer
 from keras import layers, models
