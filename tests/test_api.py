@@ -1,6 +1,5 @@
 import unittest
 import json
-import os
 from config import TEST_MODEL_FILEPATH
 from api import create_app
 
@@ -24,3 +23,8 @@ class TestClient(unittest.TestCase):
                           headers=headers)
 
         self.assertEqual(200, res.status_code)
+
+        res_json = res.get_json()
+        self.assertIsInstance(res_json["score"], str)
+        self.assertIn(res_json["sentiment"], {"pos", "neg"})
+        self.assertIsInstance(res_json["text"], str)

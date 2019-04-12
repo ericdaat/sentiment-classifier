@@ -15,12 +15,10 @@ The Model class implements the following methods:
  matrices from a Reader object
 """
 import os
-import pickle
-import numpy as np
 from abc import abstractmethod, ABC
 from keras import layers, models
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
+from nlp.tokenizer import KerasTokenizer
+
 from nlp.utils import load_word_vectors
 from nlp.preprocessing import clean_text
 
@@ -31,6 +29,32 @@ class Model(ABC):
         self.tokenizer = None
         self.model = None
 
+    def _make_training_data(self, reader):
+        """ Method for preparing the training matrices.
+
+        This function fits the tokenizer and creates train/test matrices.
+
+        Args:
+            reader (nlp.reader.Reader): a Reader instance that contains
+            the data to train the model on.
+
+        Returns:
+            x_train (np.ndarray)
+            x_test (np.ndarray)
+            y_train (np.ndarray)
+            y_test (np.ndarray)
+
+        """
+        self.tokenizer.fit(reader.train_data["review"])
+
+        x_train = self.tokenizer.transform(reader.train_data["review"])
+        x_test = self.tokenizer.transform(reader.test_data["review"])
+
+        y_train = reader.train_data["label"].values
+        y_test = reader.test_data["label"].values
+
+        return x_train, x_test, y_train, y_test
+
     def save(self, filepath):
         """Save the model weights and tokenizer
 
@@ -40,15 +64,18 @@ class Model(ABC):
 
         os.makedirs(filepath, exist_ok=True)
 
-        self.model.save(
-            os.path.join(
-                filepath,
-                "{0}_model.pkl".format(self.name)
-            )
+        model_filepath = os.path.join(
+            filepath,
+            "{0}_model.pkl".format(self.name)
         )
 
-        with open(os.path.join(filepath, "{0}_tokenizer.pkl".format(self.name)), "wb") as f:
-            pickle.dump(self.tokenizer, f, protocol=pickle.HIGHEST_PROTOCOL)
+        tokenizer_filepath = os.path.join(
+            filepath,
+            "{0}_tokenizer.pkl".format(self.name)
+        )
+
+        self.model.save(model_filepath)
+        self.tokenizer.save(tokenizer_filepath)
 
     def load(self, filepath):
         """ Load the model weights and tokenizer
@@ -56,11 +83,19 @@ class Model(ABC):
         Args:
             filepath (str): Path where to load the model.
         """
-        self.model = models.load_model(os.path.join(filepath, "{0}_model.pkl".format(self.name)))
 
-        with open(os.path.join(filepath, "{0}_tokenizer.pkl".format(self.name)), "rb") as f:
-            self.tokenizer = pickle.load(f)
+        model_filepath = os.path.join(
+            filepath,
+            "{0}_model.pkl".format(self.name)
+        )
 
+        tokenizer_filepath = os.path.join(
+            filepath,
+            "{0}_tokenizer.pkl".format(self.name)
+        )
+
+        self.model = models.load_model(model_filepath)
+        self.tokenizer = self.tokenizer.load(tokenizer_filepath)
 
     @abstractmethod
     def train(self, reader, filepath):
@@ -78,26 +113,6 @@ class Model(ABC):
         """
         pass
 
-    @abstractmethod
-    def _make_training_data(self, reader):
-        """ Method for preparing the training matrices.
-
-        This function fits the tokenizer and creates train/test matrices.
-
-        Args:
-            reader (nlp.reader.Reader): a Reader instance that contains
-            the data to train the model on.
-
-        Returns:
-            x_train (np.ndarray)
-            x_test (np.ndarray)
-            y_train (np.ndarray)
-            y_test (np.ndarray)
-
-        """
-        pass
-
-    @abstractmethod
     def predict(self, texts):
         """ Predict on a sentence
 
@@ -117,7 +132,10 @@ class Model(ABC):
         else:
             raise Exception("Wrong input kind for texts")
 
-        return cleaned_texts
+        cleaned_and_tokenized_texts = self.tokenizer.transform(cleaned_texts)
+        predictions = self.model.predict(cleaned_and_tokenized_texts)
+
+        return predictions
 
 
 class LogisticRegression(Model):
@@ -126,18 +144,10 @@ class LogisticRegression(Model):
     """
     def __init__(self):
         super(LogisticRegression, self).__init__()
-
-    def _make_training_data(self, reader):
-        self.tokenizer = Tokenizer(lower=False, filters="\t\n")
-        self.tokenizer.fit_on_texts(reader.train_data["review"])
-
-        x_train = self.tokenizer.texts_to_matrix(reader.train_data["review"])
-        y_train = reader.train_data["label"].values
-
-        x_test = self.tokenizer.texts_to_matrix(reader.test_data["review"])
-        y_test = reader.test_data["label"].values
-
-        return x_train, x_test, y_train, y_test
+        self.tokenizer = KerasTokenizer(
+            pad_max_len=None,
+            lower=True
+        )
 
     def train(self, reader, filepath):
         x_train, x_test, y_train, y_test = self._make_training_data(reader)
@@ -157,37 +167,19 @@ class LogisticRegression(Model):
 
         self.save(filepath)
 
-    def predict(self, texts):
-        texts = super(LogisticRegression, self).predict(texts)
-        texts = self.tokenizer.texts_to_matrix(texts)
-
-        predictions = self.model.predict(texts)
-
-        return predictions
-
 
 class CNN(Model):
     def __init__(self):
         super(CNN, self).__init__()
-
-    def _make_training_data(self, reader):
-        self.tokenizer = Tokenizer(lower=False, filters="\t\n")
-        self.tokenizer.fit_on_texts(reader.train_data["review"])
-
-        x_train = self.tokenizer.texts_to_sequences(reader.train_data["review"])
-        x_train = pad_sequences(x_train, maxlen=1000)
-        y_train = reader.train_data["label"].values
-
-        x_test = self.tokenizer.texts_to_sequences(reader.test_data["review"])
-        x_test = pad_sequences(x_test, maxlen=1000)
-        y_test = reader.test_data["label"].values
-
-        return x_train, x_test, y_train, y_test
+        self.tokenizer = KerasTokenizer(
+            pad_max_len=1000,
+            lower=False
+        )
 
     def train(self, reader, filepath):
         x_train, x_test, y_train, y_test = self._make_training_data(reader)
         word_vectors = load_word_vectors(filepath="data/wiki-news-300d-1M.vec",
-                                         word_index=self.tokenizer.word_index,
+                                         word_index=self.tokenizer.tokenizer.word_index,
                                          vector_size=300)
 
         embedding_layer = layers.Embedding(input_dim=word_vectors.shape[0],
@@ -208,11 +200,11 @@ class CNN(Model):
 
         concat = layers.concatenate(convs)
         hidden = layers.Dropout(0.5)(concat)
-        output = layers.Dense(2, activation="softmax")(hidden)
+        output = layers.Dense(1, activation="sigmoid")(hidden)
 
         self.model = models.Model(inputs=[i], outputs=[output])
 
-        self.model.compile(loss="sparse_categorical_crossentropy",
+        self.model.compile(loss="binary_crossentropy",
                            optimizer="adam",
                            metrics=["accuracy"])
 
@@ -222,12 +214,3 @@ class CNN(Model):
                        epochs=5)
 
         self.save(filepath)
-
-    def predict(self, texts):
-        texts = super(CNN, self).predict(texts)
-        texts = self.tokenizer.texts_to_sequences(texts)
-        texts = pad_sequences(texts, 1000)
-
-        predictions = self.model.predict(texts)
-
-        return np.asarray([[p[1]] for p in predictions])

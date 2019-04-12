@@ -9,4 +9,3 @@ class TestCleanText(unittest.TestCase):
 
     def test_split_punctuation(self):
         self.assertEqual(preprocessing.clean_text("hi!"), "hi !")
-
