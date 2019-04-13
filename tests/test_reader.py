@@ -5,7 +5,7 @@ from nlp.preprocessing import clean_text
 
 
 class TestImdb(unittest.TestCase):
-    imdb = reader.IMDBReader()
+    imdb = reader.IMDBReader(path="./data/aclImdb")
 
     def test_init(self):
         self.assertEqual(TestImdb.imdb.train_data, None)

@@ -20,7 +20,7 @@ class CommonTests(unittest.TestCase):
         self.assertIsInstance(self.model.tokenizer, tokenizer.BaseTokenizer)
 
     def test_pipeline(self):
-        imdb = reader.IMDBReader()
+        imdb = reader.IMDBReader(path="./data/aclImdb")
         imdb.load_dataset(
             limit=10,
             preprocessing_function=preprocessing.clean_text
