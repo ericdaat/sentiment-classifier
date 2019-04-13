@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from nlp import tokenizer
+from sentiment_classifier.nlp import tokenizer
 
 texts = [
     "Hi there I feel very good today",

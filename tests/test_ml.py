@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
-from nlp import reader, preprocessing, tokenizer
-from nlp.models import CNN, LogisticRegression
+from sentiment_classifier.nlp import reader, preprocessing, tokenizer
+from sentiment_classifier.nlp.models import CNN, LogisticRegression
 from keras.models import Model
 from config import TEST_MODEL_FILEPATH
 

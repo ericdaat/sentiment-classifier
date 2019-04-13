@@ -3,7 +3,7 @@ This blueprint hosts the code for classifying a sequence.
 """
 
 from flask import Blueprint, jsonify, request, current_app
-from nlp.preprocessing import clean_text
+from sentiment_classifier.nlp.preprocessing import clean_text
 
 bp = Blueprint("index", __name__)
 

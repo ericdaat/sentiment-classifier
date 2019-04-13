@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
-from nlp import reader
-from nlp.preprocessing import clean_text
+from sentiment_classifier.nlp import reader
+from sentiment_classifier.nlp.preprocessing import clean_text
 
 
 class TestImdb(unittest.TestCase):

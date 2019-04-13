@@ -1,4 +1,4 @@
-from api import create_app
+from sentiment_classifier.api import create_app
 from waitress import serve
 from config import PROD_MODEL_FILEPATH, API_PORT
 

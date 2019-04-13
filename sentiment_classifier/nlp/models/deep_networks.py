@@ -7,9 +7,9 @@ So far we have:
 """
 
 import os
-from nlp.models import Model
-from nlp.tokenizer import KerasTokenizer
-from nlp.utils import load_word_vectors
+from sentiment_classifier.nlp.models import Model
+from sentiment_classifier.nlp.tokenizer import KerasTokenizer
+from sentiment_classifier.nlp.utils import load_word_vectors
 from keras import layers, models, callbacks
 
 

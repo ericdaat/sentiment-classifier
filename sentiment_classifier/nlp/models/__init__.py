@@ -12,6 +12,6 @@ So far we have different modules in it:
     Neural Nets or Convolutionnal ones.
 """
 
-from nlp.models.model import Model
-from nlp.models.deep_networks import *
-from nlp.models.shallow_networks import *
+from sentiment_classifier.nlp.models.model import Model
+from sentiment_classifier.nlp.models.deep_networks import *
+from sentiment_classifier.nlp.models.shallow_networks import *
