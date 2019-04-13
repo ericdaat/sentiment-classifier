@@ -36,7 +36,7 @@ def create_app(model_filepath):
     app.nlp_model = model
     app.graph = graph
 
-    from api import index
+    from sentiment_classifier.api import index
     app.register_blueprint(index.bp)
 
     return app
