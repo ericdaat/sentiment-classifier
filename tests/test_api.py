@@ -1,7 +1,7 @@
 import unittest
 import json
 from config import TEST_MODEL_FILEPATH
-from api import create_app
+from sentiment_classifier.api import create_app
 
 app = create_app(model_filepath=TEST_MODEL_FILEPATH)
 client = app.test_client()

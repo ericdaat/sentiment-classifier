@@ -1,5 +1,5 @@
 import unittest
-from nlp import preprocessing
+from sentiment_classifier.nlp import preprocessing
 
 
 class TestCleanText(unittest.TestCase):

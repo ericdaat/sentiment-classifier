@@ -1,6 +1,6 @@
 import logging
-from nlp import reader, preprocessing
-from nlp.models import LogisticRegression, CNN
+from sentiment_classifier.nlp import reader, preprocessing
+from sentiment_classifier.nlp.models import LogisticRegression, CNN
 from config import PROD_MODEL_FILEPATH
 
 

@@ -5,8 +5,8 @@ So far we have:
     as baseline.
 """
 
-from nlp.models import Model
-from nlp.tokenizer import KerasTokenizer
+from sentiment_classifier.nlp.models import Model
+from sentiment_classifier.nlp.tokenizer import KerasTokenizer
 from keras import layers, models
 
 

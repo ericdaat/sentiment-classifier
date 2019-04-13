@@ -14,7 +14,7 @@ from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
 import tensorflow as tf
 
-from nlp.models.deep_networks import CNN
+from sentiment_classifier.nlp.models.deep_networks import CNN
 
 
 def create_app(model_filepath):

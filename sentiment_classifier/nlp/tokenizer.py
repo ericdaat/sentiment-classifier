@@ -9,6 +9,7 @@ So far we only have one tokenizer, based on keras.preprocessing.text.Tokenizer.
 
 
 import pickle
+import logging
 from abc import ABC, abstractmethod
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -70,6 +71,9 @@ class KerasTokenizer(BaseTokenizer):
 
     def fit(self, train_data):
         self.tokenizer.fit_on_texts(train_data)
+
+        logging.info("Tokenizer has {0} vocabulary size."
+                     .format(len(self.tokenizer.word_index)))
 
     def transform(self, data):
         if not self.pad_max_len:
