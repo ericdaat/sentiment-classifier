@@ -19,9 +19,10 @@ from abc import ABC, abstractmethod
 
 
 class Reader(ABC):
-    def __init__(self):
+    def __init__(self, path):
         self.train_data = None
         self.test_data = None
+        self.path = path
 
     @abstractmethod
     def load_dataset(self, path, limit=None, preprocessing_function=None):
@@ -29,9 +30,8 @@ class Reader(ABC):
 
 
 class IMDBReader(Reader):
-    def __init__(self):
-        super(IMDBReader, self).__init__()
-        self.path = os.path.join("data", "aclImdb")
+    def __init__(self, path):
+        super(IMDBReader, self).__init__(path)
 
     def _read_folder(self, path, label, limit, preprocessing_function):
         """ Read the data from the IMDB dataset folder.
