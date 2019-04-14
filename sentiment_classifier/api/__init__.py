@@ -14,7 +14,7 @@ from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
 import tensorflow as tf
 
-from sentiment_classifier.nlp.models.deep_networks import CNN
+from sentiment_classifier.nlp import models
 
 
 def create_app(model_filepath):
@@ -29,7 +29,9 @@ def create_app(model_filepath):
     # proxy fix
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
-    model = CNN()  # TODO: config variable to chose the model to use
+    # TODO: config variable to chose the model to use
+    model = models.ExampleModel()
+
     model.load(filepath=model_filepath)
 
     graph = tf.get_default_graph()

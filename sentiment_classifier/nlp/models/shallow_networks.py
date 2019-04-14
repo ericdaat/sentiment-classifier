@@ -58,6 +58,6 @@ class ExampleModel(Model):
 
         print("\nEvaluate on test data")
 
-        self.model.evaluate(x_test, y_test)
+        self.model.evaluate(x_test, y_test, metrics=["accuracy"])
 
         self.save(filepath)
