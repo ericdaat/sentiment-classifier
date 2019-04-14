@@ -1,8 +1,7 @@
 import unittest
 import numpy as np
 from sentiment_classifier.nlp import reader, preprocessing, tokenizer
-from sentiment_classifier.nlp.models import CNN, LogisticRegression
-from keras.models import Model
+from sentiment_classifier.nlp.models import ExampleModel
 from config import TEST_MODEL_FILEPATH
 
 
@@ -31,28 +30,24 @@ class CommonTests(unittest.TestCase):
             filepath=TEST_MODEL_FILEPATH
         )
 
-        self.assertIsInstance(self.model.tokenizer, tokenizer.BaseTokenizer)
-        self.assertIsInstance(self.model.model, Model)
+        def predict():
+            pred = self.model.predict(
+                texts=[["hi there"], ["how are you"]],
+                preprocessing_function=preprocessing.clean_text
+            )
 
-        pred = self.model.predict(
-            texts=[["hi there"], ["how are you"]],
-            preprocessing_function=preprocessing.clean_text
-        )
+            return pred
 
+        pred = predict()
         self.assertIsInstance(pred, np.ndarray)
         self.assertEqual(pred.shape, (2, 1))
 
-        self.model.load(
-            filepath=TEST_MODEL_FILEPATH
-        )
+        self.model.load(filepath=TEST_MODEL_FILEPATH)
 
-        self.assertIsInstance(self.model.tokenizer, tokenizer.BaseTokenizer)
-        self.assertIsInstance(self.model.model, Model)
-
-
-class TestLogisticRegression(CommonTests):
-    model = LogisticRegression()
+        pred = predict()
+        self.assertIsInstance(pred, np.ndarray)
+        self.assertEqual(pred.shape, (2, 1))
 
 
-class TestCNN(CommonTests):
-    model = CNN()
+class TestExampleModel(CommonTests):
+    model = ExampleModel()

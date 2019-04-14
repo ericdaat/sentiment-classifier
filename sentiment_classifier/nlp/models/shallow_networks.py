@@ -1,31 +1,40 @@
 """ Code for shallow neural networks models.
-
-So far we have:
- - LogisticRegression: Basic Logistic Regression model, that serves \
-    as baseline.
 """
 
+import keras
+import tensorflow as tf
 from sentiment_classifier.nlp.models import Model
 from sentiment_classifier.nlp.tokenizer import KerasTokenizer
-from keras import layers, models
+from sentiment_classifier.nlp.utils import load_word_vectors
 
 
-class LogisticRegression(Model):
-    """ Linear Model that works on one hot word encoding.
-    Basic but works pretty well on simple sentences.
-    """
+class ExampleModel(Model):
     def __init__(self):
-        super(LogisticRegression, self).__init__()
+        super(ExampleModel, self).__init__()
+
         self.tokenizer = KerasTokenizer(
-            pad_max_len=None,
+            pad_max_len=512,
             lower=True
         )
 
     def build_model(self, input_shape):
-        i = layers.Input(shape=(input_shape,))
-        h = layers.Dense(units=1, activation="sigmoid")(i)
+        word_vectors = load_word_vectors(
+            filepath="./data/wiki-news-300d-1M.vec",
+            word_index=self.tokenizer.tokenizer.word_index,
+            vector_size=300
+        )
 
-        model = models.Model(inputs=[i], outputs=[h])
+        model = keras.Sequential([
+            keras.layers.Embedding(
+                word_vectors.shape[0],
+                word_vectors.shape[1],
+                weights=[word_vectors],
+                trainable=False
+            ),
+            keras.layers.GlobalAveragePooling1D(),
+            keras.layers.Dense(16, activation=tf.nn.relu),
+            keras.layers.Dense(1, activation=tf.nn.sigmoid)
+        ])
 
         return model
 
@@ -35,12 +44,20 @@ class LogisticRegression(Model):
         self.model = self.build_model(input_shape=x_train.shape[1])
 
         self.model.compile(loss="binary_crossentropy",
-                           optimizer="sgd",
-                           metrics=["binary_accuracy"])
+                           optimizer="adam",
+                           metrics=["accuracy"])
+
+        self.model.summary()
+
+        print("\nTraining")
 
         self.model.fit(x=x_train,
                        y=y_train,
-                       validation_data=(x_test, y_test),
+                       validation_split=0.1,
                        epochs=5)
+
+        print("\nEvaluate on test data")
+
+        self.model.evaluate(x_test, y_test)
 
         self.save(filepath)
