@@ -1,7 +1,6 @@
 """ Code for shallow neural networks models.
 """
 
-import keras
 import tensorflow as tf
 from sentiment_classifier.nlp.models import Model
 from sentiment_classifier.nlp.tokenizer import KerasTokenizer
@@ -24,16 +23,16 @@ class ExampleModel(Model):
             vector_size=300
         )
 
-        model = keras.Sequential([
-            keras.layers.Embedding(
+        model = tf.keras.Sequential([
+            tf.keras.layers.Embedding(
                 word_vectors.shape[0],
                 word_vectors.shape[1],
                 weights=[word_vectors],
                 trainable=False
             ),
-            keras.layers.GlobalAveragePooling1D(),
-            keras.layers.Dense(16, activation=tf.nn.relu),
-            keras.layers.Dense(1, activation=tf.nn.sigmoid)
+            tf.keras.layers.GlobalAveragePooling1D(),
+            tf.keras.layers.Dense(16, activation=tf.nn.relu),
+            tf.keras.layers.Dense(1, activation=tf.nn.sigmoid)
         ])
 
         return model
@@ -58,6 +57,6 @@ class ExampleModel(Model):
 
         print("\nEvaluate on test data")
 
-        self.model.evaluate(x_test, y_test, metrics=["accuracy"])
+        self.model.evaluate(x_test, y_test)
 
         self.save(filepath)
