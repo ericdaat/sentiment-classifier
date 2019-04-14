@@ -1,6 +1,6 @@
 import logging
 from sentiment_classifier.nlp import reader, preprocessing
-from sentiment_classifier.nlp.models import LogisticRegression, CNN
+from sentiment_classifier.nlp.models import ExampleModel
 from config import PROD_MODEL_FILEPATH
 
 
@@ -14,8 +14,7 @@ def main():
     )
 
     models_to_train = [
-        # LogisticRegression(),
-        CNN()
+        ExampleModel()
     ]
 
     for model in models_to_train:

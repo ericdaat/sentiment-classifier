@@ -17,7 +17,7 @@ The Model class implements the following methods:
 """
 import os
 from abc import abstractmethod, ABC
-from keras import models
+import tensorflow as tf
 
 
 class Model(ABC):
@@ -91,7 +91,7 @@ class Model(ABC):
             "{0}_tokenizer.pkl".format(self.name)
         )
 
-        self.model = models.load_model(model_filepath)
+        self.model = tf.keras.models.load_model(model_filepath)
         self.tokenizer = self.tokenizer.load(tokenizer_filepath)
 
     @abstractmethod
