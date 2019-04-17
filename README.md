@@ -65,6 +65,10 @@ r = requests.post(
 
 ## Getting Started
 
-Make sure to checkout this notebook to better understand how the code works: [Example Model Notebook](./sentiment_classifier/notebooks/example_model.ipynb)
+Make sure to checkout this notebook to better understand how the code works:
+[Example Model Notebook](./sentiment_classifier/notebooks/example_model.ipynb).
+
+To train the classifiers, run the `train.py` scripts located in
+`sentiment_classifier/scripts`.
 
 You can also refer to the [documentation](https://sentiment-classifier-api.readthedocs.io/en/latest/?badge=latest).
