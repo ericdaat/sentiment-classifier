@@ -1,6 +1,7 @@
 """ Code for shallow neural networks models.
 """
 
+import os
 import tensorflow as tf
 from sentiment_classifier.nlp.models import Model
 from sentiment_classifier.nlp.tokenizer import KerasTokenizer
@@ -42,18 +43,27 @@ class ExampleModel(Model):
 
         self.model = self.build_model(input_shape=x_train.shape[1])
 
-        self.model.compile(loss="binary_crossentropy",
-                           optimizer="adam",
-                           metrics=["accuracy"])
+        self.model.compile(
+            loss="binary_crossentropy",
+            optimizer="adam",
+            metrics=["accuracy"]
+        )
 
         self.model.summary()
 
         print("\nTraining")
 
+        callbacks_list = [
+            tf.keras.callbacks.TensorBoard(
+                log_dir=os.path.join("logs", self.name)
+            ),
+        ]
+
         self.model.fit(x=x_train,
                        y=y_train,
                        validation_split=0.1,
-                       epochs=5)
+                       callbacks=callbacks_list,
+                       epochs=30)
 
         print("\nEvaluate on test data")
 

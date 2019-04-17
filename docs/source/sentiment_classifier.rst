@@ -13,4 +13,5 @@ Subpackages
 
     sentiment_classifier.api
     sentiment_classifier.nlp
+    sentiment_classifier.scripts
 

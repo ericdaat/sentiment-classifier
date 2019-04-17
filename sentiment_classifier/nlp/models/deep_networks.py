@@ -1,23 +1,18 @@
 """ Code for deep neural networks models.
-
-So far we have:
-
-- CNN: Implementation of the paper "Convolutional Neural Networks \
-    for Sentence Classification" by Yoon Kim.
 """
 
 import os
+import tensorflow as tf
 from sentiment_classifier.nlp.models import Model
 from sentiment_classifier.nlp.tokenizer import KerasTokenizer
 from sentiment_classifier.nlp.utils import load_word_vectors
-from keras import layers, models, callbacks
 
 
-class CNN(Model):
+class BiLSTM(Model):
     def __init__(self):
-        super(CNN, self).__init__()
+        super(BiLSTM, self).__init__()
         self.tokenizer = KerasTokenizer(
-            pad_max_len=200,
+            pad_max_len=512,
             lower=False
         )
 
@@ -28,31 +23,25 @@ class CNN(Model):
             vector_size=300
         )
 
-        embedding_layer = layers.Embedding(
-            input_dim=word_vectors.shape[0],
-            output_dim=word_vectors.shape[1],
-            weights=[word_vectors],
-            trainable=False
+        word_vectors = load_word_vectors(
+            filepath="./data/wiki-news-300d-1M.vec",
+            word_index=self.tokenizer.tokenizer.word_index,
+            vector_size=300
         )
 
-        i = layers.Input(shape=(input_shape,))
-        text_embedding = embedding_layer(i)
-        convs = []
+        model = tf.keras.Sequential([
+            tf.keras.layers.Embedding(
+                word_vectors.shape[0],
+                word_vectors.shape[1],
+                weights=[word_vectors],
+                trainable=False
+            ),
+            tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64)),
+            tf.keras.layers.Dense(16, activation=tf.nn.relu),
+            tf.keras.layers.Dense(1, activation=tf.nn.sigmoid)
+        ])
 
-        for layer_params in [(5, 3), (5, 4)]:
-            conv = layers.Conv1D(
-                filters=layer_params[0],
-                kernel_size=layer_params[1],
-                activation="relu"
-            )(text_embedding)
-
-            conv = layers.GlobalMaxPooling1D()(conv)
-            convs.append(conv)
-
-        concat = layers.concatenate(convs)
-        output = layers.Dense(1, activation="sigmoid")(concat)
-
-        return models.Model(inputs=[i], outputs=[output])
+        return model
 
     def train(self, reader, filepath):
         x_train, x_test, y_train, y_test = self._make_training_data(reader)
@@ -66,7 +55,9 @@ class CNN(Model):
         )
 
         callbacks_list = [
-            callbacks.TensorBoard(log_dir=os.path.join("logs", self.name)),
+            tf.keras.callbacks.TensorBoard(
+                log_dir=os.path.join("logs", self.name)
+            ),
         ]
 
         self.model.fit(

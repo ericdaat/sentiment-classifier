@@ -1,8 +1,10 @@
 import unittest
 import numpy as np
-from sentiment_classifier.nlp import reader, preprocessing, tokenizer
-from sentiment_classifier.nlp.models import ExampleModel
 from config import TEST_MODEL_FILEPATH
+from sentiment_classifier.nlp import reader, preprocessing, tokenizer
+from sentiment_classifier.nlp import models
+
+MAX_CORPUS_SIZE = 20
 
 
 class CommonTests(unittest.TestCase):
@@ -21,7 +23,7 @@ class CommonTests(unittest.TestCase):
     def test_pipeline(self):
         imdb = reader.IMDBReader(path="./data/aclImdb")
         imdb.load_dataset(
-            limit=10,
+            limit=MAX_CORPUS_SIZE,
             preprocessing_function=preprocessing.clean_text
         )
 
@@ -50,4 +52,4 @@ class CommonTests(unittest.TestCase):
 
 
 class TestExampleModel(CommonTests):
-    model = ExampleModel()
+    model = models.ExampleModel()

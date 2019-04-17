@@ -16,6 +16,7 @@ The Model class implements the following methods:
     matrices from a Reader object
 """
 import os
+from config import logger
 from abc import abstractmethod, ABC
 import tensorflow as tf
 
@@ -25,6 +26,8 @@ class Model(ABC):
         self.name = self.__class__.__name__
         self.tokenizer = None
         self.model = None
+
+        logger.info("Initializing {0}".format(self.name))
 
     def _make_training_data(self, reader):
         """ Method for preparing the training matrices.
